@@ -9,8 +9,21 @@
     "email": "me@hugorodrigues.com",
     "url": "hugorodrigues.com"
   },
+  "scripts": {
+    "test": "jest"
+  },
   "engines": {
     "node": "~9.5.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "app-root-path": "^2.0.1",
+    "fs-extra": "^5.0.0",
+    "openssl-wrapper": "^0.3.4",
+    "spawn-args": "^0.2.0",
+    "tmp": "0.0.33"
+  },
+  "devDependencies": {
+    "jest": "^22.3.0"
+  }
 }
