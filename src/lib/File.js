@@ -13,7 +13,7 @@ class File {
    * @param {String} destination Path location
    * @param {String} key
    */
-  fileEncrypt(origin, destination, key) {
+  encrypt(origin, destination, key) {
     // Encrypt origin to destination passing the secret via env (use FS as less as possible)
     return Process.openssl(`aes-256-cbc -in ${origin} -out ${destination} -pass env:secretKey`, null, {
       env: { secretKey: key }
@@ -26,7 +26,7 @@ class File {
    * @param {String} destination Path location
    * @param {String} key
    */
-  fileDecrypt(origin, destination, key) {
+  decrypt(origin, destination, key) {
     // Decrypt origin to destination passing the secret via env (use FS as less as possible)
     return Process.openssl(`aes-256-cbc -d -in ${origin} -out ${destination} -pass env:secretKey`, null, {
       env: { secretKey: key }

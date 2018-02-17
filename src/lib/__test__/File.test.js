@@ -23,7 +23,7 @@ describe("File.js", () => {
     await fs.outputFile(`${tempFolder.name}/example.txt`, exampleSecret)
 
     // Encrypt
-    await File.fileEncrypt(`${tempFolder.name}/example.txt`, `${tempFolder.name}/example.txt.enc`, encryptionKey)
+    await File.encrypt(`${tempFolder.name}/example.txt`, `${tempFolder.name}/example.txt.enc`, encryptionKey)
 
     // Read encrypted version
     const encryptedVersion = await fs.readFile(`${tempFolder.name}/example.txt.enc`, "utf8")
@@ -32,7 +32,7 @@ describe("File.js", () => {
     expect(encryptedVersion).not.toBe(exampleSecret)
 
     // Decrypt
-    await File.fileDecrypt(`${tempFolder.name}/example.txt.enc`, `${tempFolder.name}/example.txt.dec`, encryptionKey)
+    await File.decrypt(`${tempFolder.name}/example.txt.enc`, `${tempFolder.name}/example.txt.dec`, encryptionKey)
 
     // Read decrypted version
     const decryptedVersion = await fs.readFile(`${tempFolder.name}/example.txt.dec`, "utf8")
