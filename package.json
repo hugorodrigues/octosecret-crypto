@@ -1,0 +1,16 @@
+{
+  "name": "octosecret-crypto",
+  "version": "0.1.0",
+  "description": "Encryption lib for octosecret",
+  "main": "src/index.js",
+  "repository": "hugorodrigues/octosecret-crypto",
+  "author": {
+    "name": "Hugo Rodrigues",
+    "email": "me@hugorodrigues.com",
+    "url": "hugorodrigues.com"
+  },
+  "engines": {
+    "node": "~9.5.0"
+  },
+  "license": "MIT"
+}
