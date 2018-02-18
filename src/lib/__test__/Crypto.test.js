@@ -45,4 +45,39 @@ describe("Crypto.js", () => {
     expect(decrypted.toString()).toBe(exampleSecret)
   })
 
+  test("Encrypt and decrypt file", async () => {
+    // Create temp folder
+    const tempFolder = tmp.dirSync({ unsafeCleanup: true })
+
+    // Generate new random key for this encryption
+    const encryptionKey = await Crypto.randomSymmetricKey()
+
+    // Sample data to be encrypted
+    const exampleSecret = "Hello world!"
+
+    // Create a temporary file with data
+    await fs.outputFile(`${tempFolder.name}/example.txt`, exampleSecret)
+
+    // Encrypt
+    await Crypto.fileEncrypt(`${tempFolder.name}/example.txt`, `${tempFolder.name}/example.txt.enc`, encryptionKey)
+
+    // Read encrypted version
+    const encryptedVersion = await fs.readFile(`${tempFolder.name}/example.txt.enc`, "utf8")
+
+    // Test if its really encrypted
+    expect(encryptedVersion).not.toBe(exampleSecret)
+
+    // Decrypt
+    await Crypto.fileDecrypt(`${tempFolder.name}/example.txt.enc`, `${tempFolder.name}/example.txt.dec`, encryptionKey)
+
+    // Read decrypted version
+    const decryptedVersion = await fs.readFile(`${tempFolder.name}/example.txt.dec`, "utf8")
+
+    // Test if its really encrypted
+    expect(decryptedVersion).toBe(exampleSecret)
+
+    // Remove temp folder
+    tempFolder.removeCallback()
+  })
+
 })
