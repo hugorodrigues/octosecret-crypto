@@ -1,38 +1,97 @@
-const Process = require("./Process")
+const Crypto = require("./Crypto")
+const Tmp = require("tmp")
+const fs = require("fs-extra")
+const tar = require("tar")
 
-/**
- * Encrypts and decrypts files
- * 
- * @class File
- */
 class File {
-
   /**
-   * Encrypt a single file using the provided key
-   * @param {String} origin Path location
-   * @param {String} destination Path location
-   * @param {String} key
+   * Decrypt a file using a private key
+   * @param {Path} rsaKey
+   * @param {Path} origin
+   * @param {Path} destination
    */
-  encrypt(origin, destination, key) {
-    // Encrypt origin to destination passing the secret via env (use FS as less as possible)
-    return Process.openssl(`aes-256-cbc -in ${origin} -out ${destination} -pass env:secretKey`, null, {
-      env: { secretKey: key }
-    })
+  async decrypt(rsaKey, origin, destination) {
+    // Create temp folder
+    const tempFolder = Tmp.dirSync({ unsafeCleanup: true })
+
+    // Keep track of state
+    const data = {
+      temp: tempFolder.name,
+      encryptionKey: null,
+      encryptionKeyEnc: null
+    }
+
+    // Extract the the file into the temp folder
+    try {
+      await tar.x({ file: origin, cwd: tempFolder.name })
+    } catch (e) {
+      throw `${origin} is not a valid octosecret file`
+    }
+
+    try {
+      // Read encrypted key
+      data.encryptionKeyEnc = await fs.readFile(`${data.temp}/key`)
+      // Decrypt key using the provided rsaKey
+      data.encryptionKey = await Crypto.rsaDecrypt(data.encryptionKeyEnc, rsaKey)
+    } catch (e) {
+      throw "Invalid private key provided!"
+    }
+
+    try {
+      // Start decrypting the data file
+      await Crypto.fileDecrypt(`${data.temp}/data`, destination, data.encryptionKey)
+    } catch (e) {
+      throw `Error decrypting ${origin}`
+    }
+
+    // Remove temp folder
+    tempFolder.removeCallback()
   }
 
   /**
-   * Decrypt a single file using the provided key
-   * @param {String} origin Path location
-   * @param {String} destination Path location
-   * @param {String} key
+   * Encrypt file using a public key
+   * @param {Path} rsaKey
+   * @param {Path} origin
+   * @param {Path} destination
    */
-  decrypt(origin, destination, key) {
-    // Decrypt origin to destination passing the secret via env (use FS as less as possible)
-    return Process.openssl(`aes-256-cbc -d -in ${origin} -out ${destination} -pass env:secretKey`, null, {
-      env: { secretKey: key }
-    })
-  }
+  async encrypt(rsaKey, origin, destination) {
+    // Create temp folder
+    const tempFolder = Tmp.dirSync({ unsafeCleanup: true })
 
+    // Keep track of state
+    const data = {
+      temp: tempFolder.name,
+      encryptionKey: null,
+      encryptionKeyEnc: null
+    }
+
+    try {
+      // Convert public key to PKCS8
+      await Crypto.rsa2pkcs8(rsaKey, `${data.temp}/id_rsa.pub.pkcs8`)
+      // Generate new random key for this encryption
+      data.encryptionKey = await Crypto.randomSymmetricKey()
+      // Encrypt the encryption keyusing the PKCS8 key
+      data.encryptionKeyEnc = await Crypto.rsaEncrypt(data.encryptionKey, `${data.temp}/id_rsa.pub.pkcs8`)
+    } catch (e) {
+      throw "Invalid RSA public key provided"
+    }
+
+    try {
+      // Encrypt the file to the temp folder
+      await Crypto.fileEncrypt(origin, `${tempFolder.name}/data`, data.encryptionKey)
+    } catch (e) {
+      throw `Error encrypting ${origin}`
+    }
+
+    // Create a file in with the (encrypted) encryption key
+    await fs.outputFile(`${tempFolder.name}/key`, data.encryptionKeyEnc)
+    // Create a tar with the data and key file. This is the final bundle
+    await tar.c({ file: `${tempFolder.name}/bundle.tar`, cwd: tempFolder.name }, [`data`, `key`])
+    // Move the bundle to the final location
+    await fs.move(`${tempFolder.name}/bundle.tar`, destination, { overwrite: true })
+    // Remove temp folder
+    tempFolder.removeCallback()
+  }
 }
 
 module.exports = new File()
