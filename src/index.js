@@ -1,4 +1,4 @@
 module.exports = {
-  file: require("./lib/File"),
-  utils: require("./lib/Crypto")
+  file: require("./lib/file"),
+  utils: require("./lib/crypto")
 }

@@ -4,7 +4,7 @@ const tmp = require("tmp")
 const appRoot = require("app-root-path")
 const fixturesPath = `${appRoot}/test/fixtures`
 
-const Crypto = require("../Crypto")
+const Crypto = require("../crypto")
 
 describe("Crypto.js", () => {
 

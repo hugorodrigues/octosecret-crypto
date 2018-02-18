@@ -1,5 +1,5 @@
 const fs = require("fs-extra")
-const Process = require("./Process")
+const Process = require("./process")
 
 /**
  * Crypto utils

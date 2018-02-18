@@ -1,4 +1,4 @@
-const Crypto = require("./Crypto")
+const Crypto = require("./crypto")
 const Tmp = require("tmp")
 const fs = require("fs-extra")
 const tar = require("tar")
