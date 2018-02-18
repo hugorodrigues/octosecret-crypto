@@ -1,45 +1,26 @@
-const fs = require("fs-extra")
-const tmp = require("tmp")
+const { promisify } = require("util")
+const md5File = promisify(require("md5-file"))
 
 const appRoot = require("app-root-path")
-const fixturesPath = `${appRoot}/test/fixtures`
+const example = `${appRoot}/test/fixtures`
 
-const File = require("../File")
-const Crypto = require("../Crypto")
+const octosecret = require("../..")
 
 describe("File.js", () => {
   test("Encrypt and decrypt file", async () => {
-    // Create temp folder
-    const tempFolder = tmp.dirSync({ unsafeCleanup: true })
-    // console.log("tempFolder", tempFolder.name)
+    // Get Md5 hash of the file we going to encrypt
+    const hashOriginal = await md5File(`${example}/data/octocat.gif`)
 
-    // Generate new random key for this encryption
-    const encryptionKey = await Crypto.randomSymmetricKey()
+    // Encrypt the file
+    await octosecret.file.encrypt(`${example}/id_rsa.pub`, `${example}/data/octocat.gif`, `${example}/data/octocat.octosecret`)
 
-    // Sample data to be encrypted
-    const exampleSecret = "Hello world!"
+    // Decrypt the file
+    await octosecret.file.decrypt(`${example}/id_rsa`, `${example}/data/octocat.octosecret`, `${example}/data/octocat_new.gif`)
 
-    // Create a temporary file with data
-    await fs.outputFile(`${tempFolder.name}/example.txt`, exampleSecret)
+    // Get Md5 hash of the final file
+    const hashDecrypted = await md5File(`${example}/data/octocat_new.gif`)
 
-    // Encrypt
-    await File.encrypt(`${tempFolder.name}/example.txt`, `${tempFolder.name}/example.txt.enc`, encryptionKey)
-
-    // Read encrypted version
-    const encryptedVersion = await fs.readFile(`${tempFolder.name}/example.txt.enc`, "utf8")
-
-    // Test if its really encrypted
-    expect(encryptedVersion).not.toBe(exampleSecret)
-
-    // Decrypt
-    await File.decrypt(`${tempFolder.name}/example.txt.enc`, `${tempFolder.name}/example.txt.dec`, encryptionKey)
-
-    // Read decrypted version
-    const decryptedVersion = await fs.readFile(`${tempFolder.name}/example.txt.dec`, "utf8")
-
-    // Test if its really encrypted
-    expect(decryptedVersion).toBe(exampleSecret)
-
-    tempFolder.removeCallback()
+    // Compare the "before and after" hash
+    expect(hashOriginal).toBe(hashDecrypted)
   })
 })
