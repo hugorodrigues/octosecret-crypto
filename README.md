@@ -8,7 +8,7 @@ file.decrypt(origin, destination, key)
 ```
 
 ## Examples
-Check/run tests and `src/example.js`
+Check `__test__` and `src/example.js`
 
 ## License
 MIT © [Hugo Rodrigues](https://hugorodrigues.com)
