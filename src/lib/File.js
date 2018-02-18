@@ -6,11 +6,11 @@ const tar = require("tar")
 class File {
   /**
    * Decrypt a file using a private key
-   * @param {Path} rsaKey
+   * @param {Path} key
    * @param {Path} origin
    * @param {Path} destination
    */
-  async decrypt(rsaKey, origin, destination) {
+  async decrypt(origin, destination, key) {
     // Create temp folder
     const tempFolder = Tmp.dirSync({ unsafeCleanup: true })
 
@@ -31,8 +31,8 @@ class File {
     try {
       // Read encrypted key
       data.encryptionKeyEnc = await fs.readFile(`${data.temp}/key`)
-      // Decrypt key using the provided rsaKey
-      data.encryptionKey = await Crypto.rsaDecrypt(data.encryptionKeyEnc, rsaKey)
+      // Decrypt key using the provided key
+      data.encryptionKey = await Crypto.rsaDecrypt(data.encryptionKeyEnc, key)
     } catch (e) {
       throw "Invalid private key provided!"
     }
@@ -50,11 +50,11 @@ class File {
 
   /**
    * Encrypt file using a public key
-   * @param {Path} rsaKey
+   * @param {Path} key
    * @param {Path} origin
    * @param {Path} destination
    */
-  async encrypt(rsaKey, origin, destination) {
+  async encrypt(origin, destination, key) {
     // Create temp folder
     const tempFolder = Tmp.dirSync({ unsafeCleanup: true })
 
@@ -67,7 +67,7 @@ class File {
 
     try {
       // Convert public key to PKCS8
-      await Crypto.rsa2pkcs8(rsaKey, `${data.temp}/id_rsa.pub.pkcs8`)
+      await Crypto.rsa2pkcs8(key, `${data.temp}/id_rsa.pub.pkcs8`)
       // Generate new random key for this encryption
       data.encryptionKey = await Crypto.randomSymmetricKey()
       // Encrypt the encryption keyusing the PKCS8 key
