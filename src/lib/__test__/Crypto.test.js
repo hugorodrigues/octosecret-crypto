@@ -11,7 +11,7 @@ describe("Crypto.js", () => {
   test("randomSymmetricKey", async () => {
     // Generate random key
     const randomKey = await Crypto.randomSymmetricKey()
-    // We need better than this
+    // Check if key was generated (we need to do better than this, check size)
     expect(randomKey).not.toBe("")
   })
 
@@ -22,13 +22,13 @@ describe("Crypto.js", () => {
     // Convert key
     await Crypto.rsa2pkcs8(`${fixturesPath}/id_rsa.pub`, `${tempFolder.name}/id_rsa.pub.pkcs8`)
 
-    // Get control sample
+    // Get control sample from fixtures
     const sample = await fs.readFile(`${fixturesPath}/id_rsa.pub.PKCS8`, "utf8")
 
     // Get converted key
     const converted = await fs.readFile(`${tempFolder.name}/id_rsa.pub.pkcs8`, "utf8")
 
-    // Compare
+    // Compare the output vs the control sample
     expect(sample).toBe(converted)
   })
 
@@ -73,7 +73,7 @@ describe("Crypto.js", () => {
     // Read decrypted version
     const decryptedVersion = await fs.readFile(`${tempFolder.name}/example.txt.dec`, "utf8")
 
-    // Test if its really encrypted
+    // Test the "before and after" result
     expect(decryptedVersion).toBe(exampleSecret)
 
     // Remove temp folder
