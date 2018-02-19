@@ -6,7 +6,7 @@ const fixturesPath = `${appRoot}/test/fixtures`
 
 const Crypto = require("../crypto")
 
-describe("Crypto.js", () => {
+describe("crypto.js", () => {
 
   test("randomSymmetricKey", async () => {
     // Generate random key

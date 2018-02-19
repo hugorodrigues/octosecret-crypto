@@ -6,7 +6,7 @@ const example = `${appRoot}/test/fixtures`
 
 const octosecret = require("../..")
 
-describe("File.js", () => {
+describe("file.js", () => {
   test("Encrypt and decrypt file", async () => {
     // Get Md5 hash of the file we going to encrypt
     const hashOriginal = await md5File(`${example}/data/octocat.gif`)
