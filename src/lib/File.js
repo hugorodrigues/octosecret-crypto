@@ -21,7 +21,7 @@ class File {
       encryptionKeyEnc: null
     }
 
-    // Extract the the file into the temp folder
+    // Extract the file into the temp folder
     try {
       await tar.x({ file: origin, cwd: tempFolder.name })
     } catch (e) {
@@ -70,20 +70,20 @@ class File {
       await Crypto.rsa2pkcs8(key, `${data.temp}/id_rsa.pub.pkcs8`)
       // Generate new random key for this encryption
       data.encryptionKey = await Crypto.randomSymmetricKey()
-      // Encrypt the encryption keyusing the PKCS8 key
+      // Encrypt the encryption key using the PKCS8 key
       data.encryptionKeyEnc = await Crypto.rsaEncrypt(data.encryptionKey, `${data.temp}/id_rsa.pub.pkcs8`)
     } catch (e) {
       throw "Invalid RSA public key provided"
     }
 
     try {
-      // Encrypt the file to the temp folder
+      // Encrypt the file to the temp folder (this will be out data file)
       await Crypto.fileEncrypt(origin, `${tempFolder.name}/data`, data.encryptionKey)
     } catch (e) {
       throw `Error encrypting ${origin}`
     }
 
-    // Create a file in with the (encrypted) encryption key
+    // Save the (encrypted) encryption key to disk (this will be out key file)
     await fs.outputFile(`${tempFolder.name}/key`, data.encryptionKeyEnc)
     // Create a tar with the data and key file. This is the final bundle
     await tar.c({ file: `${tempFolder.name}/bundle.tar`, cwd: tempFolder.name }, [`data`, `key`])
