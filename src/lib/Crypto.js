@@ -28,7 +28,7 @@ class Crypto {
   async rsa2pkcs8(origin, destination) {
     // Get PKCS8 version of the key
     const PKCS8 = await Process.sshKeygen(`-e -f ${origin} -m PKCS8`)
-    // Write it to disk
+    // Write PKCS8 version to disk
     await fs.outputFile(destination, PKCS8)
   }
 
