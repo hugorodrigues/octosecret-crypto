@@ -3,11 +3,10 @@ const Process = require("./process")
 
 /**
  * Crypto utils
- * 
+ *
  * @class Crypto
  */
 class Crypto {
-
   /**
    * Generate a random symmetric key to be used for encryption
    * Default to 32 bytes key, which gives us the 256 bit key
@@ -44,7 +43,7 @@ class Crypto {
   }
 
   /**
-   * RSA Decrypt 
+   * RSA Decrypt
    *
    * @param {Buffer} data
    * @param {Path} privateKey
@@ -98,6 +97,29 @@ class Crypto {
     })
   }
 
+  /**
+   * Decrypt a Buffer using the provided key
+   *
+   * @param {Buffer or String} buffer
+   * @param {Path} key
+   */
+  bufferEncrypt(buffer, key) {
+    return Process.openssl(`aes-256-cbc -pass env:secretKey`, buffer, {
+      env: { secretKey: key }
+    })
+  }
+
+  /**
+   * Decrypt a Buffer using the provided key
+   *
+   * @param {Buffer or String} buffer
+   * @param {Path} key
+   */
+  bufferDecrypt(buffer, key) {
+    return Process.openssl(`aes-256-cbc -d -pass env:secretKey`, buffer, {
+      env: { secretKey: key }
+    })
+  }
 }
 
 module.exports = new Crypto()
