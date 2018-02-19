@@ -55,6 +55,24 @@ class Crypto {
   }
 
   /**
+   * Base64 encode via openssl
+   *
+   * @param {String or Buffer} data
+   */
+  base64Encode(data) {
+    return Process.openssl(`enc -base64 -A`, data)
+  }
+
+  /**
+   * Base64 decode via openssl
+   *
+   * @param {String or Buffer} data
+   */
+  base64Decode(data) {
+    return Process.openssl(`enc -base64 -d  -A`, data)
+  }
+
+  /**
    * Encrypt a file using the provided key
    * @param {String} origin Path location
    * @param {String} destination Path location
