@@ -2,12 +2,11 @@
 
 Encrypt and decrypt data using RSA keys
 
-[![CircleCI](https://circleci.com/gh/hugorodrigues/octosecret-crypto/tree/master.svg?style=svg)](https://circleci.com/gh/hugorodrigues/octosecret-crypto/tree/master)
+[![CircleCI](https://circleci.com/gh/hugorodrigues/octosecret-crypto/tree/master.svg?style=shield)](https://circleci.com/gh/hugorodrigues/octosecret-crypto/tree/master)
 [![Known Vulnerabilities](https://snyk.io/test/github/hugorodrigues/octosecret-crypto/badge.svg?targetFile=package.json)](https://snyk.io/test/github/hugorodrigues/octosecret-crypto?targetFile=package.json)
 [![NSP Status](https://nodesecurity.io/orgs/hr/projects/0063ce22-5c84-4499-b89f-a4866183a4b1/badge)](https://nodesecurity.io/orgs/hr/projects/0063ce22-5c84-4499-b89f-a4866183a4b1)
 
 ## Install
-
 ```shell
 npm install octosecret-crypto --save
 ```
