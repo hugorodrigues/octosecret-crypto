@@ -71,6 +71,11 @@ class Buffer {
       data64: input.substr(684)
     }
 
+    // Check if we have what we need
+    if (!bundle.key64 || !bundle.data64){
+      throw "The input is not a valid octosecret encryption"
+    }
+
     // Base64 decode for key and data
     try {
       bundle.keyEnc = await Crypto.base64Decode(bundle.key64)
