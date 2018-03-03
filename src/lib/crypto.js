@@ -28,14 +28,14 @@ class Crypto {
 
     const data = {
       // Key for encrypting
-      key: null,
+      encryptionKey: null,
       // Key for encryption, encrypted with all the keys provided
-      encryptedKeys: []
+      encryptionKeyEnc: []
     }
 
     try {
       // Generate new random key for this encryption
-      data.key = await this.randomSymmetricKey()
+      data.encryptionKey = await this.randomSymmetricKey()
     } catch (e) {
       throw new Error("Error generating symmetric key")
     }
@@ -46,9 +46,9 @@ class Crypto {
         // Convert all keys to pkcs8. Save them on FS side-by-side        
         await this.rsa2pkcs8(key, `${key}.tmp.pkcs8`)
         // Encrypt the encryption key using the PKCS8 key
-        encryptedKey = await this.rsaEncrypt(data.key, `${key}.tmp.pkcs8`)
+        encryptedKey = await this.rsaEncrypt(data.encryptionKey, `${key}.tmp.pkcs8`)
         // Save to the final array
-        data.encryptedKeys.push(encryptedKey)
+        data.encryptionKeyEnc.push(encryptedKey)
       }
 
     } catch (e) {
