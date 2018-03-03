@@ -19,6 +19,47 @@ class Crypto {
   }
 
   /**
+   * Generates a random symmetric key and makes an encryption 
+   * version for every key received.
+   * @param {Array} keys Array of keys (fs paths)
+   * @returns {Object} Object containing the key and all the encrypted key
+   */
+  async createEncryptionKey(keys){
+
+    const data = {
+      // Key for encrypting
+      key: null,
+      // Key for encryption, encrypted with all the keys provided
+      encryptedKeys: []
+    }
+
+    try {
+      // Generate new random key for this encryption
+      data.key = await this.randomSymmetricKey()
+    } catch (e) {
+      throw new Error("Error generating symmetric key")
+    }
+
+    try {
+      let encryptedKey
+      for (const key of keys) {
+        // Convert all keys to pkcs8. Save them on FS side-by-side        
+        await this.rsa2pkcs8(key, `${key}.tmp.pkcs8`)
+        // Encrypt the encryption key using the PKCS8 key
+        encryptedKey = await this.rsaEncrypt(data.key, `${key}.tmp.pkcs8`)
+        // Save to the final array
+        data.encryptedKeys.push(encryptedKey)
+      }
+
+    } catch (e) {
+      throw new Error("Invalid RSA public key provided")
+    }
+
+    return data
+  }
+
+
+  /**
    * Converts a RSA key into a PKCS8
    *
    * @param {Path} origin
@@ -35,7 +76,7 @@ class Crypto {
    * RSA Encrypt (using a PKCS8 key)
    *
    * @param {Buffer} data
-   * @param {Path} pkcs8_file
+   * @param {String} pkcs8_file Path of the pkcs8 file
    * @returns Promise
    */
   rsaEncrypt(data, pkcs8_file) {
