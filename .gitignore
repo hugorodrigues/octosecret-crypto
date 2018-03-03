@@ -60,3 +60,4 @@ typings/
 # Output from example
 octocat.octosecret
 octocat_new.gif
+*.tmp.pkcs8
