@@ -1,3 +1,3 @@
-module.exports.file = require("./lib/file")
-module.exports.buffer = require("./lib/buffer")
-module.exports.utils = require("./lib/crypto")
+module.exports.file = require("./lib/interfaces/file")
+module.exports.stream = require("./lib/interfaces/stream")
+module.exports.crypto = require("./lib/crypto")
