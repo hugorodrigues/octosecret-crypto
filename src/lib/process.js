@@ -30,8 +30,7 @@ class Process {
 
       // Pipe something to the process stdin if needed
       if (stdin) {
-        process.stdin.write(stdin)
-        process.stdin.end()
+        process.stdin.end(stdin)
       }
 
       process.stdout.on("data", data => {
