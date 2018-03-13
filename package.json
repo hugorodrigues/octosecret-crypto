@@ -12,7 +12,7 @@
   "scripts": {
     "lint": "standard | snazzy",
     "lint:fix": "standard --fix | snazzy",
-    "test": "npm run lint ; jest",
+    "test": "jest",
     "release": "np"
   },
   "engines": {
