@@ -46,7 +46,7 @@ Utils:
 ## Examples
 Encrypt and decrypt files
 ```js
-const octo = require('octosecret-crypto')
+const octosecret = require('octosecret-crypto')
 
 // Encrypt "octocat.gif" to "octocat.gif.octosecret" using "public.key"
 await octosecret.file.encrypt(`octocat.gif`, `octocat.gif.octosecret`, ['public.key'])
@@ -57,7 +57,7 @@ await octosecret.file.decrypt(`octocat.gif.octosecret`, `octocat.gif`, `~/.ssh/i
 
 Encrypt and decrypt streams
 ```js
-const octo = require('octosecret-crypto')
+const octosecret = require('octosecret-crypto')
 
 // Example data
 const dataToEncrypt = "Super secret message"
