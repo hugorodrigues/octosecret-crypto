@@ -1,7 +1,7 @@
-const Crypto = require("../crypto")
-const Tmp = require("tmp")
-const fs = require("fs-extra")
-const tar = require("tar")
+const Crypto = require('../crypto')
+const Tmp = require('tmp')
+const fs = require('fs-extra')
+const tar = require('tar')
 
 class File {
   /**
@@ -10,7 +10,7 @@ class File {
    * @param {Path} origin
    * @param {Path} destination
    */
-  async decrypt(origin, destination, key) {
+  async decrypt (origin, destination, key) {
     // Create temp folder
     const tempFolder = Tmp.dirSync({ unsafeCleanup: true })
 
@@ -30,11 +30,11 @@ class File {
 
     // List what is inside the bundle
     const filesInBundle = await fs.readdir(tempFolder.name)
-    
+
     // A bundle can have one or many keys. Find them
     const keysFound = []
     for (const fileName of filesInBundle) {
-      if (fileName.substr(0,4) === 'key_') {
+      if (fileName.substr(0, 4) === 'key_') {
         keysFound.push(fileName)
       }
     }
@@ -42,7 +42,7 @@ class File {
 
     // Tell the user we going to try multiple times
     if (totalKeysFound > 1) {
-      console.log(`This file was encrypted with ${totalKeysFound} different public-keys...`);
+      console.log(`This file was encrypted with ${totalKeysFound} different public-keys...`)
     }
 
     // Try to decrypt each key until we have a valid one
@@ -50,7 +50,7 @@ class File {
     for (const keyName of keysFound) {
       try {
         keysTried++
-        if (totalKeysFound > 1) console.log(`Trying to decrypt key ${keysTried}/${totalKeysFound}`);
+        if (totalKeysFound > 1) console.log(`Trying to decrypt key ${keysTried}/${totalKeysFound}`)
         // Read encrypted key
         data.encryptionKeyEnc = await fs.readFile(`${data.temp}/${keyName}`)
         // Decrypt key using the provided key
@@ -63,10 +63,10 @@ class File {
     }
 
     // No valid key found?
-    if (!data.encryptionKey){
-      throw new Error("Invalid private key provided!")
+    if (!data.encryptionKey) {
+      throw new Error('Invalid private key provided!')
     }
-    
+
     try {
       // Start decrypting the data file
       await Crypto.fileDecrypt(`${data.temp}/data`, destination, data.encryptionKey)
@@ -84,7 +84,7 @@ class File {
    * @param {Path} origin
    * @param {Path} destination
    */
-  async encrypt(origin, destination, keys) {
+  async encrypt (origin, destination, keys) {
     // Create temp folder
     const tempFolder = Tmp.dirSync({ unsafeCleanup: true })
 
@@ -102,7 +102,7 @@ class File {
       data.encryptionKey = finalKeys.encryptionKey
       data.encryptionKeyEnc = finalKeys.encryptionKeyEnc
     } catch (e) {
-      throw "Invalid RSA public key provided"
+      throw 'Invalid RSA public key provided'
     }
 
     try {
@@ -116,7 +116,7 @@ class File {
 
     // Save all keys to the temp folder
     let keyIndex = 0
-    for (let key of data.encryptionKeyEnc){
+    for (let key of data.encryptionKeyEnc) {
       // Save key and save the name in the bundle
       await fs.outputFile(`${tempFolder.name}/key_${keyIndex}`, key)
       // Add key to the bundle
@@ -131,7 +131,6 @@ class File {
     // Remove temp folder
     tempFolder.removeCallback()
   }
-
 }
 
 module.exports = new File()

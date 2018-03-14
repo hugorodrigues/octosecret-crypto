@@ -1,21 +1,20 @@
-const fs = require("fs-extra")
-const tmp = require("tmp")
+const fs = require('fs-extra')
+const tmp = require('tmp')
 
-const appRoot = require("app-root-path")
+const appRoot = require('app-root-path')
 const fixturesPath = `${appRoot}/test/fixtures`
 
-const Crypto = require("../crypto")
+const Crypto = require('../crypto')
 
-describe("crypto.js", () => {
-
-  test("randomSymmetricKey", async () => {
+describe('crypto.js', () => {
+  test('randomSymmetricKey', async () => {
     // Generate random key
     const randomKey = await Crypto.randomSymmetricKey()
     // Check if key was generated (we need to do better than this, check size)
-    expect(randomKey).not.toBe("")
+    expect(randomKey).not.toBe('')
   })
 
-  test("rsa2pkcs8", async () => {
+  test('rsa2pkcs8', async () => {
     // Create temp folder
     const tempFolder = tmp.dirSync({ unsafeCleanup: true })
 
@@ -23,18 +22,18 @@ describe("crypto.js", () => {
     await Crypto.rsa2pkcs8(`${fixturesPath}/id_rsa.pub`, `${tempFolder.name}/id_rsa.pub.pkcs8`)
 
     // Get control sample from fixtures
-    const sample = await fs.readFile(`${fixturesPath}/id_rsa.pub.PKCS8`, "utf8")
+    const sample = await fs.readFile(`${fixturesPath}/id_rsa.pub.PKCS8`, 'utf8')
 
     // Get converted key
-    const converted = await fs.readFile(`${tempFolder.name}/id_rsa.pub.pkcs8`, "utf8")
+    const converted = await fs.readFile(`${tempFolder.name}/id_rsa.pub.pkcs8`, 'utf8')
 
     // Compare the output vs the control sample
     expect(sample).toBe(converted)
   })
 
-  test("pkcs8 encrypt and decrypt", async () => {
+  test('pkcs8 encrypt and decrypt', async () => {
     // Something to encrypt
-    const exampleSecret = "This should be encrypted"
+    const exampleSecret = 'This should be encrypted'
 
     // Encrypt
     let encrypted = await Crypto.rsaEncrypt(exampleSecret, `${fixturesPath}/id_rsa.pub.PKCS8`)
@@ -45,7 +44,7 @@ describe("crypto.js", () => {
     expect(decrypted.toString()).toBe(exampleSecret)
   })
 
-  test("Encrypt and decrypt file", async () => {
+  test('Encrypt and decrypt file', async () => {
     // Create temp folder
     const tempFolder = tmp.dirSync({ unsafeCleanup: true })
 
@@ -53,7 +52,7 @@ describe("crypto.js", () => {
     const encryptionKey = await Crypto.randomSymmetricKey()
 
     // Sample data to be encrypted
-    const exampleSecret = "Hello world!"
+    const exampleSecret = 'Hello world!'
 
     // Create a temporary file with data
     await fs.outputFile(`${tempFolder.name}/example.txt`, exampleSecret)
@@ -62,7 +61,7 @@ describe("crypto.js", () => {
     await Crypto.fileEncrypt(`${tempFolder.name}/example.txt`, `${tempFolder.name}/example.txt.enc`, encryptionKey)
 
     // Read encrypted version
-    const encryptedVersion = await fs.readFile(`${tempFolder.name}/example.txt.enc`, "utf8")
+    const encryptedVersion = await fs.readFile(`${tempFolder.name}/example.txt.enc`, 'utf8')
 
     // Test if its really encrypted
     expect(encryptedVersion).not.toBe(exampleSecret)
@@ -71,7 +70,7 @@ describe("crypto.js", () => {
     await Crypto.fileDecrypt(`${tempFolder.name}/example.txt.enc`, `${tempFolder.name}/example.txt.dec`, encryptionKey)
 
     // Read decrypted version
-    const decryptedVersion = await fs.readFile(`${tempFolder.name}/example.txt.dec`, "utf8")
+    const decryptedVersion = await fs.readFile(`${tempFolder.name}/example.txt.dec`, 'utf8')
 
     // Test the "before and after" result
     expect(decryptedVersion).toBe(exampleSecret)
@@ -79,5 +78,4 @@ describe("crypto.js", () => {
     // Remove temp folder
     tempFolder.removeCallback()
   })
-
 })

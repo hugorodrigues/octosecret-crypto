@@ -1,12 +1,12 @@
-const appRoot = require("app-root-path")
+const appRoot = require('app-root-path')
 const example = `${appRoot}/test/fixtures`
 
-const octosecret = require("../../..")
+const octosecret = require('../../..')
 
-describe("stream.js", () => {
-  test("Encrypt and decrypt streams - One key", async () => {
+describe('stream.js', () => {
+  test('Encrypt and decrypt streams - One key', async () => {
     // Example data
-    const dataToEncrypt = "Will this work?"
+    const dataToEncrypt = 'Will this work?'
     // Encrypt
     const encrypted = await octosecret.stream.encrypt(dataToEncrypt, [`${example}/id_rsa.pub`])
     // Decrypt
@@ -17,9 +17,9 @@ describe("stream.js", () => {
     expect(decryptedText).toBe(dataToEncrypt)
   })
 
-  test("Encrypt and decrypt streams - Multiple keys", async () => {
+  test('Encrypt and decrypt streams - Multiple keys', async () => {
     // Example data
-    const dataToEncrypt = "Will this work!!!?"
+    const dataToEncrypt = 'Will this work!!!?'
     // Encrypt
     const encrypted = await octosecret.stream.encrypt(dataToEncrypt, [`${example}/id_rsa2.pub`, `${example}/id_rsa.pub`])
     // Decrypt
@@ -29,5 +29,4 @@ describe("stream.js", () => {
     // Compare the "before and after" hash
     expect(decryptedText).toBe(dataToEncrypt)
   })
-
 })

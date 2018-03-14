@@ -1,13 +1,13 @@
-const { promisify } = require("util")
-const md5File = promisify(require("md5-file"))
+const { promisify } = require('util')
+const md5File = promisify(require('md5-file'))
 
-const appRoot = require("app-root-path")
+const appRoot = require('app-root-path')
 const example = `${appRoot}/test/fixtures`
 
-const octosecret = require("../../..")
+const octosecret = require('../../..')
 
-describe("file.js", () => {
-  test("Encrypt and decrypt file using 1 key", async () => {
+describe('file.js', () => {
+  test('Encrypt and decrypt file using 1 key', async () => {
     // Get Md5 hash of the file we going to encrypt
     const hashOriginal = await md5File(`${example}/data/octocat.gif`)
 
@@ -24,7 +24,7 @@ describe("file.js", () => {
     expect(hashOriginal).toBe(hashDecrypted)
   })
 
-  test("Encrypt and decrypt file using multiple keys", async () => {
+  test('Encrypt and decrypt file using multiple keys', async () => {
     // Get Md5 hash of the file we going to encrypt
     const hashOriginal = await md5File(`${example}/data/octocat.gif`)
 
@@ -40,5 +40,4 @@ describe("file.js", () => {
     // Compare the "before and after" hash
     expect(hashOriginal).toBe(hashDecrypted)
   })
-
 })

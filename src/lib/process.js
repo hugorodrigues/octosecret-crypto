@@ -1,9 +1,9 @@
-const child_process = require("child_process")
-const spawnArgs = require("spawn-args")
+const child_process = require('child_process')
+const spawnArgs = require('spawn-args')
 
 /**
  * External process utilities
- * 
+ *
  * @class Process
  */
 class Process {
@@ -15,7 +15,7 @@ class Process {
    * @param {Buffer or String} stdin Optional std input
    * @param {Object} options Optional process options (check node docs)
    */
-  spawn(cmd, arg, stdin, options) {
+  spawn (cmd, arg, stdin, options) {
     return new Promise((resolve, reject) => {
       // Capture process outputs
       const output = {
@@ -33,16 +33,16 @@ class Process {
         process.stdin.end(stdin)
       }
 
-      process.stdout.on("data", data => {
+      process.stdout.on('data', data => {
         output.stdout.push(data)
       })
 
-      process.stderr.on("data", data => {
+      process.stderr.on('data', data => {
         output.stderr.push(data)
       })
 
       // On process termination
-      process.on("close", code => {
+      process.on('close', code => {
         if (code !== 0) {
           reject(output.stderr.toString())
         } else {
@@ -59,8 +59,8 @@ class Process {
    * @param {Buffer or String} stdin STD input (optional)
    * @param {Object} options Optional process options (check node docs)
    */
-  openssl(arg, stdin, options) {
-    return this.spawn("openssl", arg, stdin, options)
+  openssl (arg, stdin, options) {
+    return this.spawn('openssl', arg, stdin, options)
   }
 
   /**
@@ -70,8 +70,8 @@ class Process {
    * @param {Buffer or String} stdin STD input (optional)
    * @param {Object} options Optional process options (check node docs)
    */
-  sshKeygen(arg, stdin, options) {
-    return this.spawn("ssh-keygen", arg, stdin, options)
+  sshKeygen (arg, stdin, options) {
+    return this.spawn('ssh-keygen', arg, stdin, options)
   }
 }
 

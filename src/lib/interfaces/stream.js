@@ -1,20 +1,19 @@
-const Tmp = require("tmp")
-const Crypto = require("../crypto")
+const Tmp = require('tmp')
+const Crypto = require('../crypto')
 
 /**
  * Encrypt and decrypt buffers
- * 
+ *
  * @class Buffer
  */
 class Stream {
-  
   /**
    * Encrypt buffer
-   * 
-   * @param {String|Buffer} input 
+   *
+   * @param {String|Buffer} input
    * @param {String} keys
    */
-  async encrypt(input, keys) {
+  async encrypt (input, keys) {
     // Create temp folder
     const tempFolder = Tmp.dirSync({ unsafeCleanup: true })
 
@@ -22,7 +21,7 @@ class Stream {
     const data = {
       temp: tempFolder.name,
       encryptionKey: null,
-      encryptionKeyEnc: null,
+      encryptionKeyEnc: null
     }
 
     try {
@@ -31,7 +30,7 @@ class Stream {
       data.encryptionKey = finalKeys.encryptionKey
       data.encryptionKeyEnc = finalKeys.encryptionKeyEnc
     } catch (e) {
-      throw "Invalid RSA public key provided!"
+      throw 'Invalid RSA public key provided!'
     }
 
     // Encrypt the data
@@ -58,7 +57,6 @@ class Stream {
     // Final bundle
     // const bundle64Final = bundle64.join('####')
     const bundle64Final = bundle64.join('|')
-    
 
     // Remove temp folder
     tempFolder.removeCallback()
@@ -68,41 +66,40 @@ class Stream {
 
   /**
    * Decrypt buffer
-   * @param {String or Buffer} input 
-   * @param {Path} privateKey 
+   * @param {String or Buffer} input
+   * @param {Path} privateKey
    */
-  async decrypt(input, privateKey) {
-
+  async decrypt (input, privateKey) {
     const bundle = {
       keys: [],
       data: null
     }
-    
+
     // Trim the input
     let bundleInput = input.trim()
 
     // Split at the base64 end
     bundleInput = bundleInput.split('|')
-    
+
     // Base64 decode for key and data
     try {
       // First element is the data
       const dataFinal = bundleInput.shift()
-      bundle.data = await Crypto.base64Decode( dataFinal )
+      bundle.data = await Crypto.base64Decode(dataFinal)
 
       // Keep iterating for all keys
-      for (const key of bundleInput){
+      for (const key of bundleInput) {
         if (key) {
           bundle.keys.push(await Crypto.base64Decode(key))
         }
       }
     } catch (e) {
-      throw "Data is corrupted"
+      throw 'Data is corrupted'
     }
 
     // Check if we have what we need
-    if (!bundle.data || bundle.keys.length === 0){
-      throw "The input is not a valid octosecret encryption"
+    if (!bundle.data || bundle.keys.length === 0) {
+      throw 'The input is not a valid octosecret encryption'
     }
 
     const totalKeysFound = bundle.keys.length
@@ -110,7 +107,7 @@ class Stream {
     for (const key of bundle.keys) {
       try {
         keysTried++
-        if (totalKeysFound > 1) console.log(`Trying to decrypts key ${keysTried}/${totalKeysFound}`);
+        if (totalKeysFound > 1) console.log(`Trying to decrypts key ${keysTried}/${totalKeysFound}`)
         // Decrypt key using the provided key
         bundle.key = await Crypto.rsaDecrypt(key, privateKey)
         // If the last instruction is successful we can break
@@ -119,10 +116,10 @@ class Stream {
         // throw "Invalid private key provided!"
       }
     }
-    
+
     // No valid key found?
-    if (!bundle.key){
-      throw new Error("Invalid private key provided!")
+    if (!bundle.key) {
+      throw new Error('Invalid private key provided!')
     }
 
     // Decrypt data
