@@ -1,6 +1,6 @@
 {
   "name": "octosecret-crypto",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Encryption lib for octosecret",
   "main": "src/index.js",
   "repository": "hugorodrigues/octosecret-crypto",
