@@ -61,3 +61,5 @@ typings/
 octocat.octosecret
 octocat_new.gif
 *.tmp.pkcs8
+octocat.multiple.octosecret
+octocat_new_multiple.gif
